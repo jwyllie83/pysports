@@ -16,7 +16,8 @@ you get large swaths of data at a time so efficiency isn't at a premium.
 There are various [XML
 Vulnerabilities](https://docs.python.org/2/library/xml.html#xml-vulnerabilities)
 present in most XML parsers.  This code uses `BeautifulSoup` to do the legwork,
-so keep that in mind if you're using untrusted sources of data.
+so keep that in mind if you're using untrusted sources of data.  The page
+doesn't cite any known XML vulnerabilities.
 
 ## Terms of Use
 
