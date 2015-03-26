@@ -40,3 +40,6 @@ class ColumnHeader(object):
 	def __init__(self, name = None, description = None):
 		self.name = name
 		self.description = description
+
+	def __str__(self):
+		return "ColumnHeader name: '%s', description: '%s'" % (self.name, self.description)
