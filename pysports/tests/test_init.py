@@ -16,7 +16,10 @@ def test_parse_text():
 	tables = parse_text(one_table_full_text)
 
 	assert len(tables) == 1
-	assert tables[0].title == 'Drafted Players'
 	assert 'Search Form' not in [x.title for x in tables]
+
 	test_table = tables[0]
+	assert test_table.title == 'Drafted Players'
+	assert len(test_table.headers) == 32
+#	assert tables[0].valid is True
 #	assert len(test_table) == 5

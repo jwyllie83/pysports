@@ -49,6 +49,11 @@ def parse_text(stats_dump):
 		tables[index].title = table_title
 
 	# Figure out the column headers for the table
+	log.debug('Looking for column headers...')
+	column_headers = _parse_all_column_headers(soup)
+	log.debug('Found %d sets of column headers' % len(column_headers))
+	for index, column_header_set in enumerate(column_headers):
+		tables[index].headers = column_header_set
 
 	return tables
 
@@ -86,3 +91,33 @@ def _parse_all_table_names(soup):
 				headings.append(potential_heading.h2.a.contents[0])
 
 	return headings
+
+def _parse_all_column_headers(soup):
+	"""Find all of the column headers and parse them"""
+
+	return_column_headers = []
+
+	# First, grab all of the potential table soup bowls...
+	tables = _parse_all_table_tags(soup)
+
+	for table in tables:
+
+		all_column_headers = []
+
+		# Don't count the over headers!
+		potential_trs = table.findAll('tr')
+		for potential_tr in potential_trs:
+			if 'over_header' in potential_tr.get('class'):
+				continue
+			all_ths = potential_tr.findAll('th')
+			for potential_th in all_ths:
+				if potential_th.get('data-stat') is not None:
+					new_header = structures.ColumnHeader()
+					if potential_th.contents is not None and len(potential_th.contents) > 0:
+						new_header.name = potential_th.contents[0]
+					new_header.description = potential_th.get('tip')
+					all_column_headers.append(new_header)
+
+		return_column_headers.append(all_column_headers)
+
+	return return_column_headers
