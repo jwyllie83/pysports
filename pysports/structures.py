@@ -31,15 +31,15 @@ class Item(object):
 class ColumnHeader(object):
 	"""Last-level column header before the data"""
 
-	name = None
+	display_name = None
 	"Printed name for the header"
 
-	description = None
-	"Printed description on the header, when you tooltip over it"
+	class_name = None
+	"Sorting descriptor for the header; a little more meaningful"
 
-	def __init__(self, name = None, description = None):
-		self.name = name
-		self.description = description
+	def __init__(self, display_name = None, class_name = None):
+		self.display_name = display_name
+		self.class_name = class_name
 
 	def __str__(self):
-		return "ColumnHeader name: '%s', description: '%s'" % (self.name, self.description)
+		return "ColumnHeader Instance\n\tshort: '%s'\n\tlong: '%s'" % (self.display_name, self.class_name)

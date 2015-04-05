@@ -21,7 +21,7 @@ See ../README.md for more details.
 import sys
 from pysports import *
 from pysports import structures
-from BeautifulSoup import BeautifulSoup
+from bs4 import BeautifulSoup
 import logging
 
 def parse_text(stats_dump):
@@ -63,7 +63,7 @@ def _parse_all_table_tags(soup):
 
 	tables = []
 	# Parse out statistics tables based on class identifiers
-	for potential_table in soup.findAll('table'):
+	for potential_table in soup.find_all('table'):
 		if potential_table.get('class') is not None and \
 				'stats_table' in potential_table.get('class') and \
 				'form_table' not in potential_table.get('class'):
@@ -74,27 +74,35 @@ def _parse_all_table_tags(soup):
 def _parse_all_table_names(soup):
 	"""Internal function to figure out all of the table headings corresponding to data tables in the HTML"""
 
+	log = logging.getLogger('pysports._parse_all_table_names')
+
 	# Figure out all the table names
 	# This is complicated because it turns out the identifiers for these headings aren't that straightforward...
 	headings = []
-	for potential_heading in soup.findAll('div'):
+	for potential_heading in soup.find_all('div'):
 
-		# If it looks like it's the heading div for a table...
-		if potential_heading.get('class') is not None and potential_heading.get('class') == 'table_heading':
+		if potential_heading.has_attr('class') is False:
+			continue
+
+		# Looks like a table header...
+		if 'table_heading' in potential_heading['class']:
+
+			# ... make sure it's not the search box
+			if u'Search Form' in [unicode(x) for x in potential_heading.stripped_strings]:
+				continue
 
 			# If it happens to have a large heading:
+			search_text = None
 			if potential_heading.h2 is not None:
-
-				search_text = potential_heading.h2.contents[0]
-
-			if search_text != 'Search Form':
-				headings.append(potential_heading.h2.a.contents[0])
+				search_text = unicode(potential_heading.h2.string)
+			headings.append(search_text)
 
 	return headings
 
 def _parse_all_column_headers(soup):
 	"""Find all of the column headers and parse them"""
 
+	log = logging.getLogger('pysports._parse_all_column_headers')
 	return_column_headers = []
 
 	# First, grab all of the potential table soup bowls...
@@ -104,19 +112,26 @@ def _parse_all_column_headers(soup):
 
 		all_column_headers = []
 
-		# Don't count the over headers!
-		potential_trs = table.findAll('tr')
+		# Get all of the header rows
+		potential_tr = table.thead
+		potential_trs = table.find_all('tr')
 		for potential_tr in potential_trs:
+
+			# There can be a "top header" on a document. Throw that out.
 			if 'over_header' in potential_tr.get('class'):
 				continue
-			all_ths = potential_tr.findAll('th')
-			for potential_th in all_ths:
-				if potential_th.get('data-stat') is not None:
-					new_header = structures.ColumnHeader()
-					if potential_th.contents is not None and len(potential_th.contents) > 0:
-						new_header.name = potential_th.contents[0]
-					new_header.description = potential_th.get('tip')
-					all_column_headers.append(new_header)
+
+			stat_finder = {'data-stat' : True}
+			all_ths = potential_tr.find_all('th', attrs=stat_finder)
+			for stat_th in all_ths:
+
+				# Got a new column header: build it and add it to the list
+				new_header = structures.ColumnHeader()
+				new_header.display_name = unicode(stat_th.get_text())
+				new_header.class_name = unicode(stat_th['data-stat'])
+
+				log.debug(str(new_header))
+				all_column_headers.append(new_header)
 
 		return_column_headers.append(all_column_headers)
 

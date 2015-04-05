@@ -19,6 +19,13 @@ present in most XML parsers.  This code uses `BeautifulSoup` to do the legwork,
 so keep that in mind if you're using untrusted sources of data.  The page
 doesn't cite any known XML vulnerabilities.
 
+## Installing / Using
+
+`pysports` requires `BeautifulSoup4`.  Easy to get on basically any OS.  On
+Ubuntu:
+
+`sudo apt-get install python-bs4`
+
 ## Terms of Use
 
 It's your responsibility to stay within the Terms of Use of
