@@ -7,12 +7,23 @@ cwd = os.path.dirname(os.path.realpath(__file__))
 one_table_full_text = None
 one_table_full_text_soup = None
 
+complicated = None
+complicated_soup = None
+
 def setup():
 	global one_table_full_text
 	global one_table_full_text_soup
+
+	global complicated
+	global complicated_soup
+
 	with open(cwd + '/drafts_small.html') as handle:
 		one_table_full_text = handle.read()
 	one_table_full_text_soup = BeautifulSoup(one_table_full_text)
+
+	with open(cwd + '/superbowl_complicated.html') as handle:
+		complicated = handle.read()
+	complicated_soup = BeautifulSoup(complicated)
 
 def test_parse_all_table_tags():
 	soup = one_table_full_text_soup
@@ -27,6 +38,13 @@ def test_parse_all_table_names():
 	assert len(titles) == 1
 	assert type(titles[0]) == unicode
 	assert titles[0] == 'Drafted Players'
+
+	soup = complicated_soup
+	titles = _parse_all_table_names(soup)
+	assert len(titles) == 9
+	assert titles[1] == 'To Go'
+	assert titles[3] == 'Team Defense'
+	assert titles[8] == 'Individual Plays'
 
 def test_parse_all_column_headers():
 	soup = one_table_full_text_soup

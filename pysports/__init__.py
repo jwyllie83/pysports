@@ -88,7 +88,7 @@ def _parse_all_table_names(soup):
 	# This is complicated because it turns out the identifiers for these headings aren't that straightforward...
 	headings = []
 	for potential_heading in soup.find_all('div'):
-
+		
 		if potential_heading.has_attr('class') is False:
 			continue
 
@@ -103,6 +103,8 @@ def _parse_all_table_names(soup):
 			search_text = None
 			if potential_heading.h2 is not None:
 				search_text = unicode(potential_heading.h2.string)
+			if potential_heading.h3 is not None:
+				search_text = unicode(potential_heading.h3.string)
 			headings.append(search_text)
 
 	return headings
