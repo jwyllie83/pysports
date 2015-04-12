@@ -1,5 +1,5 @@
 import os
-from pysports import parse_text, _parse_all_table_tags, _parse_all_table_names, _parse_all_column_headers
+from pysports import parse_text, _parse_all_table_tags, _parse_all_table_names, _parse_all_column_headers, _parse_all_data
 from bs4 import BeautifulSoup
 
 cwd = os.path.dirname(os.path.realpath(__file__))
@@ -30,13 +30,28 @@ def test_parse_all_table_names():
 
 def test_parse_all_column_headers():
 	soup = one_table_full_text_soup
-	headers = _parse_all_column_headers(soup)[0]
+	all_headers = _parse_all_column_headers(soup)
+	headers = all_headers[0]
 	assert headers[0].display_name == 'Rk'
 	assert headers[0].class_name == 'ranker'
 	assert headers[5].display_name == 'Pos'
 	assert headers[5].class_name == 'pos'
 	assert headers[7].display_name == 'Tm'
 	assert len(headers) == 32
+
+def test_parse_all_data():
+	soup = one_table_full_text_soup
+	all_tables_rows = _parse_all_data(soup)
+	rows = all_tables_rows[0]
+	assert len(rows) == 5
+	assert rows[0][0] == 1
+	assert type(rows[0][0]) == int
+	assert rows[0][7] == 'HOU'
+	assert type(rows[0][7]) == str
+	assert rows[2][1] == 2014
+	assert type(rows[2][1]) == int
+	assert rows[2][16] == '3-10-0'
+	assert type(rows[2][16]) == str
 
 def test_parse_text():
 
@@ -49,5 +64,5 @@ def test_parse_text():
 	test_table = tables[0]
 	assert test_table.title == 'Drafted Players'
 	assert len(test_table.headers) == 32
-#	assert tables[0].valid is True
-#	assert len(test_table) == 5
+	assert test_table.valid() is True
+	assert len(test_table) == 5

@@ -55,6 +55,14 @@ def parse_text(stats_dump):
 	for index, column_header_set in enumerate(column_headers):
 		tables[index].headers = column_header_set
 
+	# Go get all of the row sets for the tables
+	log.debug('Looking for rows...')
+	row_sets = _parse_all_data(soup)
+	log.debug('Found %d sets of rows' % len(row_sets))
+	for index, rows in enumerate(row_sets):
+		for row in rows:
+			tables[index].append(row)
+
 	return tables
 
 
@@ -136,3 +144,34 @@ def _parse_all_column_headers(soup):
 		return_column_headers.append(all_column_headers)
 
 	return return_column_headers
+
+def _parse_all_data(soup):
+	"""Find all of the data points in each of the tables and add them in"""
+
+	log = logging.getLogger('pysports._parse_all_data')
+	return_rows = []
+
+	# Again, get all of the tables...
+	tables = _parse_all_table_tags(soup)
+
+	# ... get all of the rows, in order
+	for table in tables:
+
+		new_rows = []
+		all_potential_rows = table.find_all('tr')
+		for potential_row in all_potential_rows:
+			# There's no good way to identify a row, so we have to identify it by the non-presence of headers
+			if potential_row.th is not None:
+				continue
+
+			new_row = structures.Row()
+			row = potential_row
+			cells = row.find_all('td')
+			for cell in cells:
+				new_row.sieve(str(unicode(cell.get_text())))
+
+			new_rows.append(new_row)
+
+		return_rows.append(new_rows)
+
+	return return_rows
