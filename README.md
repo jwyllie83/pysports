@@ -26,6 +26,8 @@ Ubuntu:
 
 `sudo apt-get install python-bs4`
 
+`pysports` requires a Python version equal to or above 2.6.
+
 ## Terms of Use
 
 It's your responsibility to stay within the Terms of Use of
