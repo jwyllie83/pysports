@@ -128,17 +128,22 @@ def _parse_all_column_headers(soup):
 		for potential_tr in potential_trs:
 
 			# There can be a "top header" on a document. Throw that out.
-			if 'over_header' in potential_tr.get('class'):
+			if potential_tr.has_attr('class') is True and 'over_header' in potential_tr.get('class'):
 				continue
 
-			stat_finder = {'data-stat' : True}
-			all_ths = potential_tr.find_all('th', attrs=stat_finder)
+			# There are some tables that are completely bare-bones.  No over-header present.  It looks, however,
+			# like the over-headers are reliably labeled.  If that's the case, just throw those out and grab 
+			# everything else.  Hopefully this works reliably enough.
+			all_ths = potential_tr.find_all('th')
 			for stat_th in all_ths:
 
 				# Got a new column header: build it and add it to the list
 				new_header = structures.ColumnHeader()
 				new_header.display_name = unicode(stat_th.get_text())
-				new_header.class_name = unicode(stat_th['data-stat'])
+				if new_header.display_name == '':
+					new_header.display_name = None
+				if stat_th.has_attr('data-stat') is True:
+					new_header.class_name = unicode(stat_th['data-stat'])
 
 				log.debug(str(new_header))
 				all_column_headers.append(new_header)

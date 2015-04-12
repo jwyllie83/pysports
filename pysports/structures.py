@@ -73,5 +73,8 @@ class ColumnHeader(object):
 		self.display_name = display_name
 		self.class_name = class_name
 
+	def __repr__(self):
+		return self.__str__() + '\n'
+
 	def __str__(self):
 		return "ColumnHeader Instance\n\tshort: '%s'\n\tlong: '%s'" % (self.display_name, self.class_name)

@@ -32,6 +32,13 @@ def test_parse_all_table_tags():
 	table = tables[0]
 	assert len(table.find_all('tr')) == 7
 
+	soup = complicated_soup
+	tables = _parse_all_table_tags(soup)
+	assert len(tables) == 9
+	assert len(tables[0].find_all('tr')) == 4
+	assert len(tables[1].find_all('tr')) == 6
+	assert len(tables[5].find_all('tr')) == 16
+
 def test_parse_all_table_names():
 	soup = one_table_full_text_soup
 	titles = _parse_all_table_names(soup)
@@ -56,6 +63,22 @@ def test_parse_all_column_headers():
 	assert headers[5].class_name == 'pos'
 	assert headers[7].display_name == 'Tm'
 	assert len(headers) == 32
+
+	soup = complicated_soup
+	all_headers = _parse_all_column_headers(soup)
+	assert len(all_headers) == 9
+	assert len(all_headers[0]) == 3
+	assert all_headers[0][0].display_name == 'Down'
+	assert all_headers[0][0].class_name is None
+	assert len(all_headers[2]) == 15
+	assert all_headers[2][0].display_name == 'Tm'
+	assert all_headers[2][0].class_name is None
+	assert all_headers[2][5].display_name == '1st%'
+	assert all_headers[2][5].class_name is None
+	assert len(all_headers[3]) == 15
+	assert len(all_headers[8]) == 14
+	assert all_headers[8][13].display_name is None
+	assert all_headers[8][13].class_name == 'exp_pts_diff'
 
 def test_parse_all_data():
 	soup = one_table_full_text_soup
