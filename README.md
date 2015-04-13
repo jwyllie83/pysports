@@ -28,6 +28,18 @@ Ubuntu:
 
 `pysports` requires a Python version equal to or above 2.6.
 
+## Implementation Details
+
+This should have been reasonably obvious to me at the time: I should have used
+the soup tags to create tables, and then used OOO to parse out the fields.
+Passing around the big soup value like that and picking / assembling pieces is
+more brittle and confusing.  My excuse is that I haven't coded web parsing
+stuff before (and never used `BeautifulSoup`) so I wasn't aware of the
+decomposable nature of it.
+
+Either way, if you look at the code and wonder why the heck someone designed it
+like this... well, there's your reason.  You get what you pay for.
+
 ## Terms of Use
 
 It's your responsibility to stay within the Terms of Use of
