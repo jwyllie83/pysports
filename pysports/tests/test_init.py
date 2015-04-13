@@ -88,11 +88,14 @@ def test_parse_all_data():
 	assert rows[0][0] == 1
 	assert type(rows[0][0]) == int
 	assert rows[0][7] == 'HOU'
-	assert type(rows[0][7]) == str
+	assert type(rows[0][7]) == unicode
 	assert rows[2][1] == 2014
 	assert type(rows[2][1]) == int
 	assert rows[2][16] == '3-10-0'
-	assert type(rows[2][16]) == str
+	assert type(rows[2][16]) == unicode
+
+	soup = complicated_soup
+	all_tables_rows = _parse_all_data(soup)
 
 def test_parse_text():
 

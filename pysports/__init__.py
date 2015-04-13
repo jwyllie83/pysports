@@ -143,7 +143,7 @@ def _parse_all_column_headers(soup):
 				if new_header.display_name == '':
 					new_header.display_name = None
 				if stat_th.has_attr('data-stat') is True:
-					new_header.class_name = unicode(stat_th['data-stat'])
+					new_header.class_name = stat_th['data-stat'].encode('utf-8')
 
 				log.debug(str(new_header))
 				all_column_headers.append(new_header)
@@ -175,7 +175,7 @@ def _parse_all_data(soup):
 			row = potential_row
 			cells = row.find_all('td')
 			for cell in cells:
-				new_row.sieve(str(unicode(cell.get_text())))
+				new_row.sieve(cell.get_text())
 
 			new_rows.append(new_row)
 
