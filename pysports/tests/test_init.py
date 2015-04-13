@@ -82,7 +82,7 @@ def test_parse_all_column_headers():
 
 def test_parse_all_data():
 	soup = one_table_full_text_soup
-	all_tables_rows = _parse_all_data(soup)
+	all_tables_rows, all_totals = _parse_all_data(soup)
 	rows = all_tables_rows[0]
 	assert len(rows) == 5
 	assert rows[0][0] == 1
@@ -93,9 +93,23 @@ def test_parse_all_data():
 	assert type(rows[2][1]) == int
 	assert rows[2][16] == '3-10-0'
 	assert type(rows[2][16]) == unicode
+	assert len(all_totals) == 1
+	assert all_totals[0] is None
 
 	soup = complicated_soup
-	all_tables_rows = _parse_all_data(soup)
+	all_tables_rows, all_totals = _parse_all_data(soup)
+	assert len(all_tables_rows) == 9
+	assert len(all_tables_rows[5]) == 13
+	assert len(all_tables_rows[7]) == 27
+	assert all_tables_rows[0][0][0] == 'First'
+	assert all_tables_rows[8][1][7] == 'SEA 45'
+	assert type(all_tables_rows[8][0][3]) == int
+	assert type(all_tables_rows[8][0][8]) == unicode
+	assert all_tables_rows[8][-1][4] == '11:49'
+
+	assert len([x for x in all_totals if x is not None]) == 6
+	assert all_totals[2][0] == 'Pct'
+	assert all_totals[0] is None
 
 def test_parse_text():
 

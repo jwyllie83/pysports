@@ -18,6 +18,9 @@ class Table(list):
 	headers = None
 	"Last-level headers on each of the columns, right before the data"
 
+	total_row = None
+	"Special row that contains total values from the rest of the content"
+
 	def __init__(self):
 		self.title = None
 		self.headers = []

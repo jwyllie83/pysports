@@ -57,11 +57,12 @@ def parse_text(stats_dump):
 
 	# Go get all of the row sets for the tables
 	log.debug('Looking for rows...')
-	row_sets = _parse_all_data(soup)
+	row_sets, total_rows = _parse_all_data(soup)
 	log.debug('Found %d sets of rows' % len(row_sets))
 	for index, rows in enumerate(row_sets):
 		for row in rows:
 			tables[index].append(row)
+			tables[index].total_row = total_rows[index]
 
 	return tables
 
@@ -157,6 +158,7 @@ def _parse_all_data(soup):
 
 	log = logging.getLogger('pysports._parse_all_data')
 	return_rows = []
+	return_total = []
 
 	# Again, get all of the tables...
 	tables = _parse_all_table_tags(soup)
@@ -165,6 +167,8 @@ def _parse_all_data(soup):
 	for table in tables:
 
 		new_rows = []
+		new_total = None
+
 		all_potential_rows = table.find_all('tr')
 		for potential_row in all_potential_rows:
 			# There's no good way to identify a row, so we have to identify it by the non-presence of headers
@@ -174,11 +178,22 @@ def _parse_all_data(soup):
 			new_row = structures.Row()
 			row = potential_row
 			cells = row.find_all('td')
+
+			# Some tables are compressed, with a single row having "Show All..." in it.  We don't save that.
+			if len(cells) == 1 and 'Show All' in cells[0].get_text():
+				continue
+
 			for cell in cells:
 				new_row.sieve(cell.get_text())
 
-			new_rows.append(new_row)
+			# Some tables have a "Totals" row at the bottom.  You can easily calculate that from the data.  If
+			# this gets put in, just stick it in as an appendix to the table, not with the data.
+			if row.has_attr('class') and 'stat_total' in row['class']:
+				new_total = new_row
+			else:
+				new_rows.append(new_row)
 
 		return_rows.append(new_rows)
+		return_total.append(new_total)
 
-	return return_rows
+	return (return_rows, return_total)
