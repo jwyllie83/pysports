@@ -13,10 +13,9 @@ See ../README.md for more details.
 
 ### By the way, don't use this as some kind of example of how to parse with
 ### BeautifulSoup or anything.  I'm skimming the guide at
-### http://www.crummy.com/software/BeautifulSoup/bs4/doc/ to do all of this and
-### translating into BSv3 as I go.  It's not like I'm a pro at HTML parsing or
-### anything, and I'm sure there are far better ways to do what I'm looking to
-### do here
+### http://www.crummy.com/software/BeautifulSoup/bs4/doc/ to do all of this.
+### It's not like I'm a pro at HTML parsing or anything, and I'm sure there are
+### far better ways to do what I'm looking to do here
 
 import sys
 from pysports import *
