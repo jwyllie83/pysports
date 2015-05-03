@@ -44,6 +44,14 @@ like this instead of decomposing pieces (say, constructing tables and passing
 those pieces around vs. the whole soup and re-parsing), that's why.  You get
 what you pay for.
 
+## Testing / Editing
+
+`pysports` is written to be compatible with the `nose` testing tool.  You can
+head into the base directory and run a modern version of `nose` and expect
+regression tests to pass.  They cover the basics of all the functions but
+aren't proven-complete or anything.  They should work if you want to hack on
+it.
+
 ## Terms of Use
 
 It's your responsibility to comply with any and all rules of
