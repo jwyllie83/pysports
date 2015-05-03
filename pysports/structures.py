@@ -39,7 +39,7 @@ class Table(list):
 # Functionality we could add to a Row:
 #  - Save the data row label for re-sorting purposes later
 class Row(list):
-	"""Row for a data table.  Iterator returns Cell objects, left to right"""
+	"""Row for a data table.  Iterator returns cells (decorated primitive types), left to right"""
 
 	def __repr__(self):
 		return list.__repr__(self)

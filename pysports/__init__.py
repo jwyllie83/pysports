@@ -110,10 +110,13 @@ def _parse_all_table_names(soup):
 	return headings
 
 def _parse_all_column_headers(soup):
-	"""Find all of the column headers and parse them"""
+	"""Find all of the column headers and parse them.  Will only parse the first of (potentially many) header rows."""
 
 	log = logging.getLogger('pysports._parse_all_column_headers')
 	return_column_headers = []
+
+	# Some tables have repeat header rows.  Only save the first one.
+	found_headers = False
 
 	# First, grab all of the potential table soup bowls...
 	tables = _parse_all_table_tags(soup)
@@ -121,11 +124,16 @@ def _parse_all_column_headers(soup):
 	for table in tables:
 
 		all_column_headers = []
+		found_headers = False
 
 		# Get all of the header rows
 		potential_tr = table.thead
 		potential_trs = table.find_all('tr')
 		for potential_tr in potential_trs:
+
+			# Found a header row and fully parsed it already?  Let's get out of here.
+			if found_headers == True:
+				break
 
 			# There can be a "top header" on a document. Throw that out.
 			if potential_tr.has_attr('class') is True and 'over_header' in potential_tr.get('class'):
@@ -147,6 +155,7 @@ def _parse_all_column_headers(soup):
 
 				log.debug(str(new_header))
 				all_column_headers.append(new_header)
+				found_headers = True
 
 		return_column_headers.append(all_column_headers)
 
@@ -170,6 +179,9 @@ def _parse_all_data(soup):
 
 		all_potential_rows = table.find_all('tr')
 		for potential_row in all_potential_rows:
+
+			total_row = False
+
 			# There's no good way to identify a row, so we have to identify it by the non-presence of headers
 			if potential_row.th is not None:
 				continue
@@ -183,11 +195,14 @@ def _parse_all_data(soup):
 				continue
 
 			for cell in cells:
+				# Colspans are one way to identify a "total row" with summary info, though not the only one.
+				if cell.has_attr('colspan') is True:
+					total_row = True
 				new_row.sieve(cell.get_text())
 
 			# Some tables have a "Totals" row at the bottom.  You can easily calculate that from the data.  If
 			# this gets put in, just stick it in as an appendix to the table, not with the data.
-			if row.has_attr('class') and 'stat_total' in row['class']:
+			if (row.has_attr('class') and 'stat_total' in row['class']) or total_row is True:
 				new_total = new_row
 			else:
 				new_rows.append(new_row)
