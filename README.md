@@ -1,7 +1,7 @@
 ## Overview
 
-Library to manipulate data on sports-reference.com for custom analysis to pull
-large(r) swaths of data.
+Library to manipulate data on sports-reference.com for custom analysis in
+Python.
 
 ## General functionality:
 
