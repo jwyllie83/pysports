@@ -60,3 +60,8 @@ need to necessitate processing like this.  It's not that much cash.
 I purposefully don't include any functionality to spider the site in this, just
 to parse the already-obtained text.  You have to find your own way to actually
 get the tables to parse.
+
+## License
+
+`pysports` is implemented according to the BSD 3-Clause License.  You can find
+a copy in the LICENSE file.
