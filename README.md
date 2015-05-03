@@ -51,8 +51,8 @@ sports-reference.com.  Put another way, it's not my responsibility if you use
 this tool as part of a system that breaks their rules.  Some links you might
 find helpful to find out what the rules are:
 
-[Data Use](http://www.sports-reference.com/data_use.shtml)
-[Terms of Use](http://www.sports-reference.com/termsofuse.shtml)
+- [Data Use](http://www.sports-reference.com/data_use.shtml)
+- [Terms of Use](http://www.sports-reference.com/termsofuse.shtml)
 
 You might want to consider the yearly ad-free fee if you have a large enough
 need to necessitate processing like this.  It's not that much cash.
