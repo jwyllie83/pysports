@@ -30,6 +30,26 @@ Ubuntu:
 
 `pysports` is not Python3 compatible.
 
+## Very Quick Tutorial
+
+`pysports` is really easy to use.  You basically get a table of objects with
+data.
+
+```python
+# Assume this page has two tables on it, with table headers, and totals on the
+# tables at the bottom
+with open('/path/to/saved_html_with_tables.html') as handle:
+	text_blob = handle.read()
+
+tables = pysports.parse_text(text_blob)
+
+first_table = tables[0]
+print 'Table Title (the big green thing): %s' % first_table.title
+print 'Geometry of the table: %d rows x %d cols % (len(first_table), len(first_table.headers))
+print 'Printed text for the first column on the table: %s' % (first_table.headers[0].display_name)
+print 'Top-left cell of data, assuming it's a string as its data gets parsed: %s' % (first_table[0][0])
+```
+
 ## Implementation Details
 
 This should have been reasonably obvious to me at the time: I should have used
