@@ -13,6 +13,9 @@ complicated_soup = None
 multiple_headers = None
 multiple_headers_soup = None
 
+updated_table = None
+updated_table_soup = None
+
 def setup():
 	global one_table_full_text
 	global one_table_full_text_soup
@@ -22,6 +25,9 @@ def setup():
 
 	global multiple_headers
 	global multiple_headers_soup
+
+	global updated_table
+	global updated_table_soup
 
 	with open(cwd + '/drafts_small.html') as handle:
 		one_table_full_text = handle.read()
@@ -34,6 +40,10 @@ def setup():
 	with open(cwd + '/single_table_multiple_headers.html') as handle:
 		multiple_headers = handle.read()
 	multiple_headers_soup = BeautifulSoup(multiple_headers)
+
+	with open(cwd + '/2015_draft.html') as handle:
+		updated_table = handle.read()
+	updated_table_soup = BeautifulSoup(updated_table)
 
 def test_parse_all_table_tags():
 	soup = one_table_full_text_soup
@@ -53,6 +63,12 @@ def test_parse_all_table_tags():
 	tables = _parse_all_table_tags(soup)
 	assert len(tables) == 1
 
+	soup = updated_table_soup
+	tables = _parse_all_table_tags(soup)
+	assert len(tables) == 2
+	assert len(tables[0].find_all('tr')) == 270
+	assert len(tables[1].find_all('tr')) == 3
+
 def test_parse_all_table_names():
 	soup = one_table_full_text_soup
 	titles = _parse_all_table_names(soup)
@@ -71,6 +87,12 @@ def test_parse_all_table_names():
 	titles = _parse_all_table_names(soup)
 	assert len(titles) == 1
 	assert titles[0] == 'Drafted Players'
+
+	soup = updated_table_soup
+	titles = _parse_all_table_names(soup)
+	assert len(titles) == 2
+	assert titles[0] == 'Drafted Players'
+	assert titles[1] == 'Supplemental Draft'
 
 
 def test_parse_all_column_headers():
@@ -112,6 +134,16 @@ def test_parse_all_column_headers():
 	assert headers[30].display_name == 'College/Univ'
 	assert headers[30].class_name == 'college_id'
 
+	soup = updated_table_soup
+	all_headers = _parse_all_column_headers(soup)
+	assert len(all_headers) == 2
+	headers = all_headers[0]
+	assert len(headers) == 29
+	assert headers[0].display_name == 'Rnd'
+	assert headers[0].class_name == 'draft_round'
+	assert headers[3].display_name is None
+	assert headers[3].class_name == 'player'
+
 def test_parse_all_data():
 	soup = one_table_full_text_soup
 	all_tables_rows, all_totals = _parse_all_data(soup)
@@ -150,6 +182,16 @@ def test_parse_all_data():
 	assert len(all_tables_rows[0]) == 256
 	assert all_tables_rows[0][254][4] == 'Tyler Starr'
 	assert type(all_tables_rows[0][254][0]) == int
+
+	soup = updated_table_soup
+	all_tables_rows, all_totals = _parse_all_data(soup)
+	assert all_totals == [None, None]
+	assert len(all_tables_rows) == 2
+	table_rows = all_tables_rows[0]
+	assert len(table_rows) == 256
+	assert table_rows[0][3] == u'Jameis Winston'
+	assert table_rows[1][27] == 'Oregon'
+	assert type(table_rows[0][0]) == int
 	
 
 def test_parse_text():
@@ -186,3 +228,4 @@ def test_parse_text():
 	length_spec = [3, 4, 2, 2, 2, 13, 8, 27, 125]
 	for index, dummy in enumerate(length_spec):
 		assert len(tables[index]) == length_spec[index]
+

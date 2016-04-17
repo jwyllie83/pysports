@@ -4,9 +4,7 @@ for easier processing.
 
 Parsing functions:
 
-- parse_handle() -- Takes an open file handle and reads stats tables out of it
 - parse_text() -- Takes a blob of text and reads stats tables out of it
-- parse_URI() -- Takes a URI, loads it, and reads stats tables out of it
 
 See ../README.md for more details.
 """
@@ -16,6 +14,12 @@ See ../README.md for more details.
 ### http://www.crummy.com/software/BeautifulSoup/bs4/doc/ to do all of this.
 ### It's not like I'm a pro at HTML parsing or anything, and I'm sure there are
 ### far better ways to do what I'm looking to do here
+###
+### (Author's note: there's a better way to do this, at least: after writing,
+### I figured out that you can pass around decomposed BeautifulSoup objects
+### rather than re-parsing the whole structure.  It's a far, far better and
+### cleaner way to do this.  I'm not going to re-write it, but, if you're
+### wondering why that's done... that's why)
 
 import sys
 from pysports import *
@@ -97,6 +101,12 @@ def _parse_all_table_names(soup):
 
 			# ... make sure it's not the search box
 			if u'Search Form' in [unicode(x) for x in potential_heading.stripped_strings]:
+				continue
+
+			# There's this annoying thing in new formats where they report draft pick trades on some draft
+			# pages.  I'm really not sure what to do about it programmatically: you'd need to know adjacent
+			# tags to know that there's no table after it.  For now, I'll filter it out, but it's brittle.
+			if u'Draft Pick Trades' in [unicode(x) for x in potential_heading.stripped_strings]:
 				continue
 
 			# If it happens to have a large heading:
